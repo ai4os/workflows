@@ -11,14 +11,12 @@ import requests
 load_dotenv()
 
 # Workflows that should keep running even if no commits are made to the repo
-# Syntax: (repo, workflow_name)
 # If workflow name is "*" then keep all repo workflows alive
+# Workflows in this very same repo do not need to be added because we have a dummy
+# commit in the keep-alive GH Action to keep activity in this repo.
 WORKFLOWS = [
     ("ai4os/ai4os-ai4life-loader", "filter_models"),
 ]
-
-# Always enable this workflow himself, to avoid being himself shutdown
-SELF = ("ai4os/workflows", "keep-alive")
 
 GITHUB_API_URL = "https://api.github.com"
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
@@ -99,8 +97,6 @@ def keep_alive():
         print("Warning: GITHUB_TOKEN / GH_TOKEN environment variable is not set. API calls may fail or be rate-limited.")
 
     targets = list(WORKFLOWS)
-    if SELF not in targets:
-        targets.append(SELF)
 
     for repo, target_name in targets:
         print(f"\nChecking workflows in '{repo}' for '{target_name}'...")

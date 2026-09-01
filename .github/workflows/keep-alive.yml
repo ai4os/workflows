@@ -28,3 +28,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_PAT_ACTIONS }}
         run: |
           python gh_actions/keep_alive.py
+
+      # This workflow cannot reenable itself. So we add a dummy empty commit so that we
+      # keep the repo active and the workflow enabled.
+      - name: Keep-Alive Repo Heartbeat
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B keep-alive-heartbeat
+          git commit --allow-empty -m "chore: keep-alive heartbeat"
+          git push origin keep-alive-heartbeat --force
