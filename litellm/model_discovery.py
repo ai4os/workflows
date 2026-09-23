@@ -123,6 +123,7 @@ for provider_name in PROVIDER_NAMES:
                 "output_cost_per_token": OUTPUT_COST,
             },
             "model_info": {},
+            "provider": "litellm_proxy",
         }
         add_resp = requests.post(
             f"{LITELLM_BASE_URL.rstrip('/')}/model/new",
