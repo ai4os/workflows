@@ -1,4 +1,4 @@
-name: LiteLLM Model Discovery
+name: LiteLLM maintenance
 
 on:
   schedule:
@@ -8,6 +8,9 @@ on:
 jobs:
   model-discovery:
     runs-on: ubuntu-latest
+    env:
+      LITELLM_BASE_URL: ${{ vars.LITELLM_BASE_URL }}
+      LITELLM_API_KEY: ${{ secrets.LITELLM_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,12 +26,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Model Discovery
+      - name: Run model discovery
         env:
-          LITELLM_BASE_URL: ${{ vars.LITELLM_BASE_URL }}
-          LITELLM_API_KEY: ${{ secrets.LITELLM_API_KEY }}
           ENGRAMMER_API_KEY: ${{ secrets.ENGRAMMER_API_KEY }}
           IFCA01_API_KEY: ${{ secrets.IFCA01_API_KEY }}
           IISAS01_API_KEY: ${{ secrets.IISAS01_API_KEY }}
         run: |
           python litellm/model_discovery.py
+
+      - name: Probe model capabilities
+        run: |
+          python litellm/model_capabilities.py
