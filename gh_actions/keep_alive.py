@@ -4,19 +4,34 @@ We go over workflows and reenable them if disabled.
 """
 
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 import requests
+import yaml
 
 load_dotenv()
 
+ACTIONS_PATH = Path(__file__).parent / "actions.yml"
+
+
+def load_workflows(file_path: Path = ACTIONS_PATH) -> list[tuple[str, str]]:
+    """Load target workflows from the actions YAML file."""
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+
+    workflows = []
+    for action in data.get("actions", []):
+        repo = action.get("repo")
+        name = action.get("name")
+        if repo and name is not None:
+            workflows.append((repo, str(name)))
+    return workflows
+
+
 # Workflows that should keep running even if no commits are made to the repo
 # If workflow name is "*" then keep all repo workflows alive
-# Workflows in this very same repo do not need to be added because we have a dummy
-# commit in the keep-alive GH Action to keep activity in this repo.
-WORKFLOWS = [
-    ("ai4os/ai4os-ai4life-loader", "filter_models"),
-]
+WORKFLOWS = load_workflows()
 
 GITHUB_API_URL = "https://api.github.com"
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")

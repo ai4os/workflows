@@ -1,0 +1,16 @@
+# This file keeps track of the actions that should run periodically and that we want
+# to actively receive notifications if they start failing
+
+actions:
+
+  - repo: ai4os/ai4os-ai4life-loader
+    name: filter_models
+    owner: falibabaei
+
+  - repo: ai4os/workflows
+    name: "*"
+    owner: IgnacioHeredia
+
+  - repo: ai4os/issue-tracker
+    name: "*"
+    owner: IgnacioHeredia
