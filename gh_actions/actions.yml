@@ -14,3 +14,7 @@ actions:
   - repo: ai4os/issue-tracker
     name: "*"
     owner: IgnacioHeredia
+
+  - repo: ai4os/ai4-docs
+    name: "*"
+    owner: IgnacioHeredia
