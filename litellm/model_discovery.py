@@ -133,6 +133,39 @@ for provider_name in PROVIDER_NAMES:
         add_resp.raise_for_status()
         print(f"[{provider_name}] Registered model: {model_id}")
 
+        # Add model to 'public' access group
+        ag_resp = requests.get(
+            f"{LITELLM_BASE_URL.rstrip('/')}/v1/access_group",
+            headers=headers,
+        )
+        ag_resp.raise_for_status()
+        public_group = next(
+            (ag for ag in ag_resp.json() if ag.get("access_group_name") == "public"),
+            None,
+        )
+        if public_group:
+            current_models = public_group.get("access_model_names") or []
+            if model_id not in current_models:
+                update_payload = {
+                    "access_group_name": public_group.get("access_group_name"),
+                    "description": public_group.get("description"),
+                    "access_model_names": current_models + [model_id],
+                    "access_mcp_server_ids": public_group.get("access_mcp_server_ids") or [],
+                    "access_agent_ids": public_group.get("access_agent_ids") or [],
+                    "assigned_team_ids": public_group.get("assigned_team_ids") or [],
+                    "assigned_key_ids": public_group.get("assigned_key_ids") or [],
+                }
+                ag_id = public_group.get("access_group_id")
+                update_resp = requests.put(
+                    f"{LITELLM_BASE_URL.rstrip('/')}/v1/access_group/{ag_id}",
+                    headers=headers,
+                    json=update_payload,
+                )
+                update_resp.raise_for_status()
+                print(f"[{provider_name}] Added {model_id} to 'public' access group")
+        else:
+            print("⚠️ 'public' access group not found")
+
     # Delete old models
     models_to_delete = set(existing_provider_models.keys()) - provider_model_ids
     for model_id in models_to_delete:
