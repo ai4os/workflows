@@ -37,3 +37,7 @@ jobs:
       - name: Probe model capabilities
         run: |
           python litellm/model_capabilities.py
+
+      - name: Cleanup access groups
+        run: |
+          python litellm/access_group_cleanup.py
