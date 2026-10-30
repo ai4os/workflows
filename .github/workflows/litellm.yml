@@ -41,3 +41,7 @@ jobs:
       - name: Cleanup access groups
         run: |
           python litellm/access_group_cleanup.py
+
+      - name: Consistency checks
+        run: |
+          python litellm/consistency_checks.py

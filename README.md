@@ -14,6 +14,8 @@ Included workflows:
 
     - running manual model discovery on LiteLLM configured sub-providers (local LiteLLMs)
     - automate model capability assessment for new models
+    - automate access group cleaning of old assets
+    - check aliases still work fine
 
 All these workflows are stateless, not needing persistent storage.
 Stateful workflows will need to be ran on the future ai4os workflow manager.
