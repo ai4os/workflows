@@ -1,0 +1,35 @@
+name: Keycloak maintenance
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  propagate-to-litellm:
+    runs-on: ubuntu-latest
+    env:
+      KC_URL: ${{ vars.KC_URL }}
+      KC_REALM: ${{ vars.KC_REALM }}
+      KC_CLIENT_ID: ${{ secrets.KC_CLIENT_ID }}
+      KC_CLIENT_SECRET: ${{ secrets.KC_CLIENT_SECRET }}
+      LITELLM_BASE_URL: ${{ vars.LITELLM_BASE_URL }}
+      LITELLM_API_KEY: ${{ secrets.LITELLM_API_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Propagate Keycloak access levels to LiteLLM teams
+        run: |
+          python keycloak/propagate_to_litellm.py
