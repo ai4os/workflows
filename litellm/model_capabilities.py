@@ -35,6 +35,12 @@ EXCLUDE_CRITERIA = [
     "rerank",
 ]
 
+# Add models that should be recomputed anyway for example:
+# RECOMPUTE_MODELS = ["ENGRAMMER/LibertAIDAI/GLM-5.3-Flash-NVFP4"]
+RECOMPUTE_MODELS = []
+
+ALL_CAPABILITIES = ["vision", "reasoning", "tool_calling", "max_input_tokens"]
+
 # Create persistent session
 headers = {
     "Authorization": f"Bearer {LITELLM_API_KEY}",
@@ -199,7 +205,10 @@ def main():
         ):
             continue
         info = item.get("model_info") or item
-        missing_caps = identify_missing_capabilities(info)
+        if model_name in RECOMPUTE_MODELS:
+            missing_caps = list(ALL_CAPABILITIES)
+        else:
+            missing_caps = identify_missing_capabilities(info)
         if missing_caps:
             models_to_update.append((model_name, item, info, missing_caps))
 
