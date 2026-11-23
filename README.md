@@ -17,6 +17,10 @@ Included workflows:
     - automate access group cleaning of old assets
     - check aliases still work fine
 
+* Keycloak workflows:
+
+    - propagate Keycloak users groups to LiteLLM user teams
+
 All these workflows are stateless, not needing persistent storage.
 Stateful workflows will need to be ran on the future ai4os workflow manager.
 
